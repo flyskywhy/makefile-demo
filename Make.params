@@ -1,0 +1,43 @@
+HOST := UNIX
+PREFIX := .
+ifdef SYSROOT
+	COMMAND_PREFIX := arm-linux-gnueabihf-
+endif
+CC := $(COMMAND_PREFIX)gcc
+OBJCOPY := $(COMMAND_PREFIX)objcopy
+AR := $(COMMAND_PREFIX)ar
+
+# Generic Makefile for C/C++ Program needed variables
+
+CXX := $(COMMAND_PREFIX)g++
+
+#
+# Modify CFLAGS to match newer compilers
+#
+ACTUAL_CPPFLAGS =
+ACTUAL_CFLAGS = $(TARGET_GLOBAL_CFLAGS)
+ACTUAL_CXXFLAGS = $(TARGET_GLOBAL_CFLAGS)
+ACTUAL_LDFLAGS = $(TARGET_GLOBAL_LDFLAGS)
+
+# GCC since 2.95 does -finit-priority by default so remove it from old HALs
+ACTUAL_CFLAGS := $(subst -finit-priority,,$(ACTUAL_CFLAGS))
+
+# -fvtable-gc is known to be broken in all recent GCC.
+ACTUAL_CFLAGS := $(subst -fvtable-gc,,$(ACTUAL_CFLAGS))
+
+
+# Separate C++ flags out from C flags.
+ACTUAL_CFLAGS := $(subst -fno-rtti,,$(ACTUAL_CFLAGS))
+ACTUAL_CFLAGS := $(subst -frtti,,$(ACTUAL_CFLAGS))
+ACTUAL_CFLAGS := $(subst -Woverloaded-virtual,,$(ACTUAL_CFLAGS))
+ACTUAL_CFLAGS := $(subst -fvtable-gc,,$(ACTUAL_CFLAGS))
+
+ACTUAL_CXXFLAGS := $(subst -Wstrict-prototypes,,$(ACTUAL_CXXFLAGS))
+
+# Generic Makefile for C/C++ Program needed variables
+CPPFLAGS := $(ACTUAL_CFLAGS)
+CFLAGS   := $(ACTUAL_CFLAGS) -I$(PREFIX)/include
+CXXFLAGS := $(ACTUAL_CXXFLAGS) -I$(PREFIX)/include
+LDFLAGS  := $(ACTUAL_LDFLAGS) -L$(PREFIX)/lib
+
+# OBJEXT := .rel

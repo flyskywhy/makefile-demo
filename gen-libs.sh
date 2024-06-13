@@ -28,7 +28,7 @@ LIBS_HOST=`echo ${COMMAND_PREFIX} | sed "s/\-$//"`
 # cp .libs/libjpeg.a ${APP_DIR}/
 # cd ${APP_DIR}
 
-# libjpeg.a
+# libcjson.a
 cd ${APP_DIR}/..
 [ ! -d cJSON/.git ] && git clone https://github.com/DaveGamble/cJSON -b v1.7.12
 cd cJSON
